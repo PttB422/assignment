@@ -1,7 +1,7 @@
-import React, {memo, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {memo, useMemo} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {useAppStateContext} from '../context/AppContext';
-import {useGetPosts} from '../hooks/useGetPosts';
+import useFilterPosts from '../hooks/useFilterPosts';
 import {Post} from '../types/Post';
 
 type PostItemProps = {
@@ -23,35 +23,13 @@ const PostItem = memo(({post, refresh}: PostItemProps) => {
 });
 
 const PostsComponent = () => {
-  const {posts} = useGetPosts();
-  const {refresh, filterValue} = useAppStateContext();
-  const [filteredData, setFilteredData] = useState<Post[]>([]);
+  const {refresh} = useAppStateContext();
+  const {filteredData} = useFilterPosts();
   const renderItem = ({item: post}: {item: Post}) => (
     <PostItem post={post} refresh={refresh} />
   );
   const keyExtractor = (post: Post, index: number) =>
     `${index} ${post.id} ${post.userId}`;
-
-  const itemHeight = 140;
-  const getItemLayout = useCallback(
-    (posts: Post[] | null | undefined, index: number) => ({
-      length: itemHeight,
-      offset: index * itemHeight,
-      index,
-    }),
-    [],
-  );
-
-  useEffect(() => {
-    if (posts.length === 0) {
-      return;
-    }
-    let filtered = posts;
-    if (filterValue.length !== 0) {
-      filtered = posts.filter(post => post.body.includes(filterValue));
-    }
-    setFilteredData(filtered);
-  }, [posts, filterValue]);
 
   return (
     <FlatList
@@ -63,7 +41,6 @@ const PostsComponent = () => {
       style={styles.postsFlatList}
       keyExtractor={keyExtractor}
       renderItem={renderItem}
-      getItemLayout={getItemLayout}
     />
   );
 };
