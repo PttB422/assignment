@@ -1,4 +1,4 @@
-import React, {memo, useMemo} from 'react';
+import React, {memo, useCallback} from 'react';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import {useAppStateContext} from '../context/AppContext';
 import useFilterPosts from '../hooks/useFilterPosts';
@@ -6,18 +6,14 @@ import {Post} from '../types/Post';
 
 type PostItemProps = {
   post: Post;
-  refresh: boolean;
+  getRandomNumber: () => number;
 };
 
-const PostItem = memo(({post, refresh}: PostItemProps) => {
-  const getRandomNumber = useMemo(() => {
-    return Math.floor(Math.random() * (8000000000 + 1) + 1000000000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refresh]);
+const PostItem = memo(({post, getRandomNumber}: PostItemProps) => {
   return (
     <View style={styles.postItemContainer}>
       <Text>{`${post.id}: ${post.body} - `}</Text>
-      <Text style={styles.postItemRandomNumber}>{getRandomNumber}</Text>
+      <Text style={styles.postItemRandomNumber}>{getRandomNumber()}</Text>
     </View>
   );
 });
@@ -25,8 +21,12 @@ const PostItem = memo(({post, refresh}: PostItemProps) => {
 const PostsComponent = () => {
   const {refresh} = useAppStateContext();
   const {filteredData} = useFilterPosts();
+  const getRandomNumber = useCallback(() => {
+    return Math.floor(Math.random() * (8000000000 + 1) + 1000000000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refresh]);
   const renderItem = ({item: post}: {item: Post}) => (
-    <PostItem post={post} refresh={refresh} />
+    <PostItem post={post} getRandomNumber={getRandomNumber} />
   );
   const keyExtractor = (post: Post, index: number) =>
     `${index} ${post.id} ${post.userId}`;

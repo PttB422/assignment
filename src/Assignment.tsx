@@ -7,7 +7,11 @@ import SearchComponent from './components/SearchComponent';
 const Assignment = () => {
   return (
     <View style={styles.container}>
-      <Image source={Images.doggoWalk} style={styles.gif} />
+      <Image
+        source={Images.doggoWalk}
+        style={styles.gif}
+        resizeMode="contain"
+      />
       <SearchComponent />
       <PostsComponent />
     </View>
@@ -17,7 +21,7 @@ const Assignment = () => {
 const styles = StyleSheet.create({
   container: {flex: 1},
   gif: {
-    alignSelf: 'center',
+    width: '100%',
   },
 });
 

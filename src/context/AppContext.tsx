@@ -50,13 +50,13 @@ export const useAppDispatchContext = () => useContext(AppDispatchContext);
 
 export const AppProvider: React.FC = ({children}) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const contextValue = useMemo(() => {
-    return {state, dispatch};
-  }, [state, dispatch]);
+  const memoizedValue = useMemo(() => {
+    return {state};
+  }, [state]);
 
   return (
-    <AppDispatchContext.Provider value={contextValue.dispatch}>
-      <AppStateContext.Provider value={contextValue.state}>
+    <AppDispatchContext.Provider value={dispatch}>
+      <AppStateContext.Provider value={memoizedValue.state}>
         {children}
       </AppStateContext.Provider>
     </AppDispatchContext.Provider>
